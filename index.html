@@ -1973,7 +1973,7 @@
 
 
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', (e) => {
 
       e.preventDefault();
 
@@ -1987,47 +1987,19 @@
 
 
 
-      try {
+      const testo = `Ciao! Vorrei una demo/progetto su MT Automation Lab.\n\n`
+        + `Nome: ${data.nome}\n`
+        + `Email: ${data.email}\n`
+        + `WhatsApp/Telefono: ${data.whatsapp || '-'}\n`
+        + `Piattaforma: ${data.piattaforma}\n\n`
+        + `Idea:\n${data.idea}`;
 
-        const res = await fetch('/submit', {
+      window.open(`https://wa.me/393292291588?text=${encodeURIComponent(testo)}`, '_blank');
 
-          method: 'POST',
-
-          headers: { 'Content-Type': 'application/json' },
-
-          body: JSON.stringify(data)
-
-        });
-
-
-
-        if (!res.ok) throw new Error('submit failed');
-
-        const out = await res.json();
-
-        if (out.ok) {
-
-          form.reset();
-
-          successBox.style.display = 'block';
-
-          successBox.textContent = 'Richiesta salvata correttamente.';
-
-          successBox.scrollIntoView({ behavior:'smooth', block:'nearest' });
-
-        } else {
-
-          throw new Error('server error');
-
-        }
-
-      } catch (err) {
-
-        errorBox.style.display = 'block';
-
-        errorBox.textContent = 'Errore nel salvataggio. Riprova.';
-
-      }
+      form.reset();
+      successBox.style.display = 'block';
+      successBox.textContent = 'Ti abbiamo aperto WhatsApp con il messaggio pronto: premi Invia per completare la richiesta.';
+      successBox.scrollIntoView({ behavior:'smooth', block:'nearest' });
 
     });
 
