@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MT Automation Lab — Custom Expert Advisors, Indicators and MT4/MT5 Tools</title>
+  <meta name="description" content="Custom Expert Advisors, indicators, scripts, panels and modifications for MetaTrader 4 and MetaTrader 5. Try your tool for 7 days before you decide.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MT Automation Lab — Custom MT4/MT5 Development">
+  <meta property="og:description" content="Turn your trading idea into a real Expert Advisor, indicator or trading tool. Built to your rules, with a 7-day trial before purchase.">
+  <meta property="og:image" content="https://mtautomationlab-cloud.github.io/landing/logo.png">
+  <meta property="og:url" content="https://mtautomationlab-cloud.github.io/landing/en/">
+  <style>
+    :root {
+      --bg:#07111d;
+      --bg-2:#0c1830;
+      --panel:#ffffff;
+      --panel-2:#f4f7fb;
+      --text:#0f172a;
+      --muted:#5b6b7f;
+      --line:rgba(15,23,42,.08);
+      --cyan:#12d6ff;
+      --cyan-2:#36a2ff;
+      --gold:#ffb547;
+      --gold-2:#ff7a18;
+      --violet:#875bff;
+      --green:#1ecb8b;
+      --shadow:0 20px 60px rgba(3,10,24,.18);
+      --radius:24px;
+      --radius-sm:18px;
+      --max:1180px;
+    }
+
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(18,214,255,.18), transparent 25%),
+        radial-gradient(circle at 80% 15%, rgba(255,181,71,.18), transparent 22%),
+        radial-gradient(circle at 80% 75%, rgba(135,91,255,.14), transparent 28%),
+        linear-gradient(180deg,#eef4fb 0%,#f8fbff 45%,#eef3f8 100%);
+      min-height:100vh;
+    }
+
+    .hero-wrap {
+      background:
+        radial-gradient(circle at 20% 0%, rgba(18,214,255,.18), transparent 22%),
+        radial-gradient(circle at 80% 0%, rgba(255,181,71,.18), transparent 22%),
+        linear-gradient(180deg,#08131f 0%,#0b1830 60%,#12213d 100%);
+      color:#fff;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero-wrap::after {
+      content:"";
+      position:absolute;
+      inset:auto -140px -140px auto;
+      width:320px;
+      height:320px;
+      background:radial-gradient(circle,rgba(18,214,255,.25),transparent 65%);
+      filter:blur(18px);
+      pointer-events:none;
+    }
+
+    .container {
+      width:min(calc(100% - 32px),var(--max));
+      margin:0 auto;
+    }
+
+    .topbar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:20px 0 10px;
+    }
+
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      letter-spacing:.2px;
+      color:#fff;
+      text-decoration:none;
+    }
+
+    .brand img {
+      width:58px;
+      height:58px;
+      object-fit:cover;
+      border-radius:16px;
+      box-shadow:0 16px 38px rgba(0,0,0,.48);
+    }
+
+    .top-cta,.cta-row {
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .btn {
+      border:none;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:52px;
+      padding:0 22px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:15px;
+      cursor:pointer;
+      transition:.22s ease;
+      white-space:nowrap;
+    }
+
+    .btn:hover { transform:translateY(-1px); }
+    .btn-primary {
+      color:#07111d;
+      background:linear-gradient(90deg,var(--gold),#ffd05e);
+      box-shadow:0 16px 36px rgba(255,181,71,.22);
+    }
+    .btn-secondary {
+      color:#fff;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(8px);
+    }
+    .btn-whatsapp {
+      color:#07111d;
+      background:linear-gradient(90deg,#4ff0a6,#21d381);
+      box-shadow:0 16px 36px rgba(30,203,139,.22);
+    }
+    .btn-telegram {
+      color:#fff;
+      background:linear-gradient(90deg,#188fd5,#25b8f2);
+      box-shadow:0 16px 36px rgba(37,184,242,.22);
+    }
+
+    .hero {
+      display:grid;
+      grid-template-columns:1.08fr .92fr;
+      gap:34px;
+      padding:30px 0 70px;
+      align-items:center;
+    }
+
+    .eyebrow {
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.1);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:#e8f4ff;
+      backdrop-filter:blur(8px);
+    }
+
+    .hero h1 {
+      margin:16px 0 18px;
+      font-size:clamp(40px,6vw,68px);
+      line-height:1.02;
+      letter-spacing:-.04em;
+    }
+
+    .grad,.gradient-text {
+      background:linear-gradient(90deg,#fff 0%,#90edff 30%,#b69cff 65%,#ffd38a 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    /* variante per sfondi CHIARI: la versione sopra (bianco/ciano/viola/oro) e' quasi
+       invisibile su sfondo chiaro, trovato con test visivo reale il 18/07/2026 */
+    .gradient-text-dark {
+      background:linear-gradient(90deg,var(--cyan-2) 0%,var(--violet) 55%,var(--gold-2) 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero p {
+      margin:0 0 24px;
+      font-size:clamp(18px,2.4vw,22px);
+      line-height:1.55;
+      color:rgba(255,255,255,.82);
+      max-width:720px;
+    }
+
+    .cta-row { margin-bottom:26px; }
+
+    .stats {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .stat {
+      padding:18px 16px;
+      border-radius:20px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(8px);
+    }
+
+    .stat strong {
+      display:block;
+      font-size:29px;
+      line-height:1;
+      margin-bottom:8px;
+    }
+
+    .stat span {
+      font-size:13px;
+      color:rgba(255,255,255,.76);
+    }
+
+    .showcase-card {
+      position:relative;
+      border-radius:30px;
+      overflow:hidden;
+      background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 30px 80px rgba(2,8,23,.42);
+      max-width:430px;
+      margin:0 auto;
+      aspect-ratio:9/16;
+    }
+
+    .showcase-card video {
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      background:#000;
+    }
+
+    section { padding:78px 0; }
+
+    .section-head {
+      text-align:center;
+      max-width:900px;
+      margin:0 auto 30px;
+    }
+
+    .kicker {
+      display:inline-block;
+      color:#866100;
+      font-weight:900;
+      letter-spacing:.16em;
+      font-size:13px;
+      text-transform:uppercase;
+      margin-bottom:14px;
+    }
+
+    .section-head h2 {
+      margin:0 0 12px;
+      font-size:clamp(32px,4.6vw,52px);
+      line-height:1.06;
+      letter-spacing:-.035em;
+      color:#0b1324;
+    }
+
+    .section-head p {
+      margin:0 auto;
+      max-width:760px;
+      color:var(--muted);
+      font-size:18px;
+      line-height:1.6;
+    }
+
+    .grid-3 {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:22px;
+    }
+
+    .grid-4 {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:22px;
+    }
+
+    .card {
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:26px;
+      box-shadow:var(--shadow);
+    }
+
+    .step-card {
+      position:relative;
+      overflow:hidden;
+    }
+
+    .step-card::before {
+      content:"";
+      position:absolute;
+      inset:0 0 auto 0;
+      height:5px;
+      background:linear-gradient(90deg,var(--cyan),var(--gold),var(--violet));
+    }
+
+    .step-no {
+      display:inline-grid;
+      place-items:center;
+      width:54px;
+      height:54px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#f0fbff,#fff5e6);
+      color:#0b1324;
+      font-weight:900;
+      font-size:18px;
+      margin-bottom:16px;
+      border:1px solid rgba(15,23,42,.08);
+    }
+
+    .card h3 {
+      margin:0 0 10px;
+      font-size:28px;
+      line-height:1.1;
+      letter-spacing:-.02em;
+      color:#0b1324;
+    }
+
+    .card p {
+      margin:0;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.7;
+    }
+
+    .service-icon {
+      width:60px;
+      height:60px;
+      border-radius:20px;
+      display:grid;
+      place-items:center;
+      font-size:26px;
+      margin-bottom:14px;
+      background:linear-gradient(135deg,rgba(18,214,255,.12),rgba(255,181,71,.18));
+      border:1px solid rgba(15,23,42,.06);
+    }
+
+    .benefits {
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:26px;
+      align-items:stretch;
+    }
+
+    .light-panel {
+      background:linear-gradient(180deg,rgba(255,255,255,.86),rgba(255,255,255,.76));
+      border:1px solid rgba(15,23,42,.06);
+      border-radius:34px;
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+
+    .list { display:grid; gap:14px; margin-top:18px; }
+
+    .list-item {
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      padding:14px 0;
+      border-bottom:1px solid rgba(15,23,42,.08);
+    }
+
+    .check {
+      flex:0 0 32px;
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#14d9ff,#ffd06f);
+      color:#07111d;
+      font-weight:900;
+      box-shadow:0 10px 20px rgba(18,214,255,.2);
+    }
+
+    .small {
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .trial {
+      background:
+        radial-gradient(circle at 90% 0%,rgba(255,181,71,.2),transparent 24%),
+        radial-gradient(circle at 0% 100%,rgba(18,214,255,.18),transparent 30%),
+        linear-gradient(180deg,#091425 0%,#12213d 100%);
+      color:#fff;
+    }
+
+    .trial .section-head h2 { color:#fff; }
+    .trial .section-head p { color:rgba(255,255,255,.78); }
+
+    .trial-grid {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:20px;
+    }
+
+    .trial-card {
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:26px;
+      padding:24px;
+      backdrop-filter:blur(8px);
+    }
+
+    .trial-card strong {
+      display:block;
+      font-size:16px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#ffe19b;
+      margin-bottom:8px;
+    }
+
+    .trial-card h3 {
+      color:#fff;
+      font-size:28px;
+      margin:0 0 10px;
+    }
+
+    .trial-card p {
+      color:rgba(255,255,255,.78);
+      line-height:1.65;
+    }
+
+    .examples-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:22px;
+    }
+
+    .example-card {
+      background:#0b1628;
+      border-radius:26px;
+      overflow:hidden;
+      box-shadow:0 24px 60px rgba(3,10,24,.2);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .example-card img {
+      width:100%;
+      display:block;
+      aspect-ratio:16/10;
+      object-fit:cover;
+      background:#050b12;
+    }
+
+    .example-card div {
+      padding:18px 20px 21px;
+      color:#fff;
+    }
+
+    .example-card h3 {
+      margin:0 0 7px;
+      font-size:21px;
+    }
+
+    .example-card p {
+      margin:0;
+      color:rgba(255,255,255,.72);
+      line-height:1.55;
+    }
+
+    .contact-wrap {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:24px;
+    }
+
+    .contact-card {
+      background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.84));
+      border:1px solid rgba(15,23,42,.07);
+      border-radius:32px;
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+
+    .contact-card.dark {
+      background:
+        radial-gradient(circle at 100% 0%,rgba(255,181,71,.16),transparent 24%),
+        radial-gradient(circle at 0% 100%,rgba(18,214,255,.14),transparent 30%),
+        linear-gradient(180deg,#0b1628 0%,#12213d 100%);
+      color:#fff;
+    }
+
+    .mini-title {
+      margin:0 0 10px;
+      font-size:30px;
+      letter-spacing:-.03em;
+    }
+
+    .form-grid {
+      display:grid;
+      gap:14px;
+    }
+
+    .field {
+      display:grid;
+      gap:8px;
+    }
+
+    .field label {
+      font-size:14px;
+      font-weight:800;
+      color:#22304a;
+    }
+
+    .field input,.field select,.field textarea {
+      width:100%;
+      border:1px solid rgba(15,23,42,.1);
+      background:#fff;
+      color:#0b1324;
+      border-radius:18px;
+      min-height:54px;
+      padding:14px 16px;
+      font-size:16px;
+      outline:none;
+    }
+
+    .field textarea {
+      min-height:140px;
+      resize:vertical;
+    }
+
+    .field input:focus,.field select:focus,.field textarea:focus {
+      border-color:rgba(18,214,255,.65);
+      box-shadow:0 0 0 4px rgba(18,214,255,.12);
+    }
+
+    .success {
+      display:none;
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:#e9fff7;
+      color:#0c6b47;
+      border:1px solid rgba(30,203,139,.28);
+      font-weight:700;
+    }
+
+    .footer {
+      padding:30px 0 48px;
+      text-align:center;
+      color:#6a798c;
+      font-size:14px;
+    }
+
+    .footer-actions {
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    @media (max-width:1100px) {
+      .hero,.benefits,.contact-wrap { grid-template-columns:1fr; }
+      .grid-4 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+
+    @media (max-width:780px) {
+      .topbar { flex-direction:column; align-items:flex-start; }
+      .hero { padding:16px 0 44px; }
+      .stats,.grid-3,.trial-grid,.examples-grid,.grid-4 { grid-template-columns:1fr; }
+      .section-head h2 { font-size:36px; }
+      .card h3 { font-size:26px; }
+      .cta-row,.top-cta { width:100%; }
+      .btn { width:100%; }
+      section { padding:58px 0; }
+      .showcase-card { max-width:340px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-wrap">
+    <div class="container">
+      <div class="topbar">
+        <a class="brand" href="#">
+          <img src="https://mtautomationlab-cloud.github.io/landing/logo.png" alt="MT Automation Lab logo">
+          <span>MT Automation Lab</span>
+        </a>
+        <div class="top-cta">
+          <a class="btn btn-secondary" href="#video">Watch the video</a>
+          <a class="btn btn-primary" href="#contact">Request a demo</a>
+        </div>
+      </div>
+
+      <div class="hero">
+        <div>
+          <span class="eyebrow">MT4 / MT5 · custom development</span>
+          <h1>Turn your <span class="grad">trading idea</span> into a real tool.</h1>
+          <p>Custom Expert Advisors, indicators, panels, scripts and modifications for MetaTrader 4 and MetaTrader 5. You define the rules; we build the software and let you test it before you buy.</p>
+
+          <div class="cta-row">
+            <a class="btn btn-whatsapp" href="https://wa.me/393292291588" target="_blank" rel="noopener">Chat on WhatsApp</a>
+            <a class="btn btn-telegram" href="https://t.me/MTAutomationLab_bot" target="_blank" rel="noopener">Start on Telegram</a>
+            <a class="btn btn-secondary" href="#process">How it works</a>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><strong>EA</strong><span>Custom Expert Advisors</span></div>
+            <div class="stat"><strong>IND</strong><span>Indicators built to your rules</span></div>
+            <div class="stat"><strong>TOOLS</strong><span>Panels, scripts and utilities</span></div>
+            <div class="stat"><strong>7 DAYS</strong><span>Test before you decide</span></div>
+          </div>
+        </div>
+
+        <div id="video">
+          <div class="showcase-card">
+            <video controls playsinline preload="metadata" poster="https://mtautomationlab-cloud.github.io/landing/logo.png">
+              <source src="https://mtautomationlab-cloud.github.io/landing/video_promo.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">What we build</div>
+        <h2>Real tools for <span class="gradient-text-dark">real trading workflows</span></h2>
+        <p>We develop automation, indicators, execution panels and custom modifications. The goal is simple: turn your trading logic into software that is clear, useful and ready to test.</p>
+      </div>
+
+      <div class="grid-4">
+        <div class="card">
+          <div class="service-icon">⚙️</div>
+          <h3>Expert Advisors</h3>
+          <p>Custom EAs based on your entry, exit, timing, filtering and risk-management rules.</p>
+        </div>
+        <div class="card">
+          <div class="service-icon">📈</div>
+          <h3>Indicators</h3>
+          <p>Visual and technical indicators designed around the way you read and analyse the market.</p>
+        </div>
+        <div class="card">
+          <div class="service-icon">🧩</div>
+          <h3>Panels and tools</h3>
+          <p>Execution panels, buttons, utilities and workflow tools built to make repetitive actions faster and clearer.</p>
+        </div>
+        <div class="card">
+          <div class="service-icon">🛠️</div>
+          <h3>Repairs and upgrades</h3>
+          <p>Fixes, revisions, feature additions and full rebuilds of existing MT4/MT5 EAs and indicators.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="process">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">The process</div>
+        <h2>From your idea to a working tool in <span class="gradient-text-dark">3 clear steps</span></h2>
+        <p>You explain what you need, we build it, and you test the result before making a final decision.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card step-card">
+          <div class="step-no">01</div>
+          <h3>Describe your idea</h3>
+          <p>Send us the rules, screenshots, notes or an existing file. You do not need to write a technical specification.</p>
+        </div>
+        <div class="card step-card">
+          <div class="step-no">02</div>
+          <h3>We build it for MT4 or MT5</h3>
+          <p>We translate your requirements into a custom EA, indicator, script, panel or revision of an existing project.</p>
+        </div>
+        <div class="card step-card">
+          <div class="step-no">03</div>
+          <h3>Test it before you buy</h3>
+          <p>You receive a protected 7-day trial. If the tool works as expected, you unlock and purchase it. If not, you do not buy it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="benefits">
+        <div class="light-panel">
+          <div class="kicker">Why work with us</div>
+          <h2 style="margin:0 0 8px;font-size:42px;letter-spacing:-.03em;">More clarity. More control. Less manual work.</h2>
+          <p style="margin:0;color:var(--muted);font-size:18px;line-height:1.7;">You are not buying a generic product from a catalogue. Every project starts from your requirements, your rules and your existing workflow.</p>
+
+          <div class="list">
+            <div class="list-item">
+              <div class="check">✓</div>
+              <div><strong>Genuinely custom development</strong><br><span class="small">No standard package forced onto your idea.</span></div>
+            </div>
+            <div class="list-item">
+              <div class="check">✓</div>
+              <div><strong>Practical communication</strong><br><span class="small">Explain the behaviour you want in plain language; we handle the technical implementation.</span></div>
+            </div>
+            <div class="list-item">
+              <div class="check">✓</div>
+              <div><strong>MT4 and MT5 support</strong><br><span class="small">Expert Advisors, indicators, scripts, panels and revisions for both platforms.</span></div>
+            </div>
+            <div class="list-item" style="border-bottom:none;">
+              <div class="check">✓</div>
+              <div><strong>7-day trial before purchase</strong><br><span class="small">Test the protected version first, then decide whether to unlock it.</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="light-panel">
+          <div class="kicker">Typical requests</div>
+          <h2 style="margin:0 0 10px;font-size:38px;letter-spacing:-.03em;">What we can create</h2>
+          <div class="grid-3" style="grid-template-columns:1fr;gap:16px;margin-top:20px;">
+            <div class="card" style="padding:22px;">
+              <h3 style="font-size:24px;">A custom indicator</h3>
+              <p>Signals, filters, alerts, dashboards and visual logic based on your own market-reading process.</p>
+            </div>
+            <div class="card" style="padding:22px;">
+              <h3 style="font-size:24px;">An EA with precise rules</h3>
+              <p>Entries, exits, sessions, filters, trade management and risk controls implemented exactly as specified.</p>
+            </div>
+            <div class="card" style="padding:22px;">
+              <h3 style="font-size:24px;">A rebuild or upgrade</h3>
+              <p>Repair an existing project, add missing features, improve reliability or rebuild it cleanly from the available logic.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="trial">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker" style="color:#ffe19b;">The trial</div>
+        <h2>Test it first. <span class="grad">Decide afterwards.</span></h2>
+        <p>You do not have to buy a black box. You receive the tool, test the protected version for seven days and only then decide whether to unlock it.</p>
+      </div>
+
+      <div class="trial-grid">
+        <div class="trial-card">
+          <strong>Step 1</strong>
+          <h3>Submit the project</h3>
+          <p>Tell us what you want to build, revise or reconstruct, and whether you use MT4 or MT5.</p>
+        </div>
+        <div class="trial-card">
+          <strong>Step 2</strong>
+          <h3>Receive a 7-day trial</h3>
+          <p>Use the protected version in your own environment and check that the requested behaviour is there.</p>
+        </div>
+        <div class="trial-card">
+          <strong>Step 3</strong>
+          <h3>Make an informed decision</h3>
+          <p>If you are satisfied, you purchase and unlock the final version. Otherwise, you simply do not proceed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">Real examples</div>
+        <h2>Some tools we have built</h2>
+        <p>Examples of interfaces, dashboards and trading utilities developed over time. The screenshots remain in their original language.</p>
+      </div>
+
+      <div class="examples-grid">
+        <article class="example-card"><img src="https://mtautomationlab-cloud.github.io/landing/ex1.png" alt="Market analysis dashboard"><div><h3>Market analysis dashboard</h3><p>A custom multi-panel interface designed to organise technical information in one place.</p></div></article>
+        <article class="example-card"><img src="https://mtautomationlab-cloud.github.io/landing/ex2.png" alt="Multi-asset bias dashboard"><div><h3>Multi-asset bias dashboard</h3><p>A structured overview for comparing directional information across several instruments.</p></div></article>
+        <article class="example-card"><img src="https://mtautomationlab-cloud.github.io/landing/ex3.png" alt="EA risk management panel"><div><h3>EA risk-management panel</h3><p>Operational controls and limits presented through a clear MetaTrader interface.</p></div></article>
+        <article class="example-card"><img src="https://mtautomationlab-cloud.github.io/landing/ex4.png" alt="EA execution panel"><div><h3>EA execution panel</h3><p>Buttons, settings and trading functions arranged for faster day-to-day use.</p></div></article>
+        <article class="example-card"><img src="https://mtautomationlab-cloud.github.io/landing/ex6.png" alt="Multi-asset correlation scanner"><div><h3>Multi-asset scanner</h3><p>A dedicated tool for viewing relationships and signals across multiple markets.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">Contact</div>
+        <h2>Tell us what you want to build</h2>
+        <p>Complete the form and WhatsApp will open with your project message already prepared. Review it, then press Send.</p>
+      </div>
+
+      <div class="contact-wrap">
+        <div class="contact-card">
+          <h3 class="mini-title">Request a demo or project review</h3>
+          <p class="small" style="margin:0 0 18px;">Share the essentials. You can send files, screenshots and more detailed specifications afterwards through WhatsApp or Telegram.</p>
+
+          <form id="leadForm" class="form-grid">
+            <div class="field">
+              <label for="nome">Name</label>
+              <input id="nome" name="nome" required placeholder="Your name">
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="name@example.com">
+            </div>
+            <div class="field">
+              <label for="whatsapp">WhatsApp / Phone</label>
+              <input id="whatsapp" name="whatsapp" placeholder="+39 ...">
+            </div>
+            <div class="field">
+              <label for="piattaforma">Platform</label>
+              <select id="piattaforma" name="piattaforma">
+                <option value="MT4">MT4</option>
+                <option value="MT5">MT5</option>
+                <option value="Not sure yet">Not sure yet</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="idea">Your idea or project</label>
+              <textarea id="idea" name="idea" required placeholder="Describe the EA, indicator, panel, script, modification or reconstruction you need..."></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">Prepare WhatsApp message</button>
+            <div id="success" class="success">We opened WhatsApp with your message ready: press Send to complete your request.</div>
+          </form>
+        </div>
+
+        <div class="contact-card dark">
+          <div class="kicker" style="color:#ffe19b;">What you receive</div>
+          <h3 class="mini-title">A tool built around your own requirements.</h3>
+          <p style="color:rgba(255,255,255,.78);line-height:1.7;">Not a generic download. We start from your idea, rules or existing project and turn them into a practical MT4/MT5 tool that you can test before purchase.</p>
+          <ul style="padding-left:18px;margin:18px 0 0;line-height:1.9;color:rgba(255,255,255,.86);">
+            <li>Expert Advisors, indicators, scripts and panels</li>
+            <li>Repairs, revisions and full project rebuilds</li>
+            <li>A protected 7-day trial before purchase</li>
+            <li>Direct communication for adjustments and clarifications</li>
+            <li>Delivery for MetaTrader 4 or MetaTrader 5</li>
+          </ul>
+          <div class="footer-actions" style="justify-content:flex-start;">
+            <a class="btn btn-whatsapp" href="https://wa.me/393292291588" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="btn btn-telegram" href="https://t.me/MTAutomationLab_bot" target="_blank" rel="noopener">Telegram project bot</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      MT Automation Lab — Custom software development for MetaTrader 4 and MetaTrader 5
+      <div class="footer-actions">
+        <a class="btn btn-whatsapp" href="https://wa.me/393292291588" target="_blank" rel="noopener">Chat on WhatsApp</a>
+        <a class="btn btn-telegram" href="https://t.me/MTAutomationLab_bot" target="_blank" rel="noopener">Start your project on Telegram</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('leadForm');
+    const successBox = document.getElementById('success');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      const testo = `Hello! I would like to request a demo/project from MT Automation Lab.\n\n`
+        + `Name: ${data.nome}\n`
+        + `Email: ${data.email}\n`
+        + `WhatsApp/Phone: ${data.whatsapp || '-'}\n`
+        + `Platform: ${data.piattaforma}\n\n`
+        + `Project idea:\n${data.idea}`;
+      window.open(`https://wa.me/393292291588?text=${encodeURIComponent(testo)}`, '_blank');
+      form.reset();
+      successBox.style.display = 'block';
+      successBox.textContent = 'We opened WhatsApp with your message ready: press Send to complete your request.';
+    });
+  </script>
+</body>
+</html>
